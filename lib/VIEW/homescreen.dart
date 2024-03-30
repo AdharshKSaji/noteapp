@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:noteapp/VIEW/notescreen.dart';
 import 'package:noteapp/controller/note_controller_.dart';
 import 'package:noteapp/core/constants/colorconstants.dart';
@@ -123,14 +124,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 5,
               ),
               TextField(
+                readOnly: true,
                 controller: dateEditingController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8)),
                     filled: true,
                     hintText: "Date",
-                    fillColor: ColorConstants.primaryGrey),
-              ),
+                    fillColor: ColorConstants.primaryGrey,
+                    suffixIcon:InkWell(onTap: ()async {
+                    final selectedDateTime=await  showDatePicker(context: context,
+                       firstDate: DateTime.now(),
+                       lastDate: DateTime(2030));
+                       if(selectedDateTime !=null){
+                        String formatedDate =DateFormat("dd MMM yy").format(selectedDateTime);
+                       
+                       dateEditingController.text=formatedDate.toString();
+                       }
+                       dsetState(() {
+                         
+                       },);
+                    },
+                    child: Icon(Icons.calendar_month) ),
+                    
+               ) ),
               SizedBox(
                 height: 10,
               ),

@@ -18,7 +18,9 @@ class NoteScreenController {
     required String des,
     required String date,
     required int colorIndex,
-  }) {
+  }) 
+  
+  {
     notesList.add(
         {"title": title, "dis": des, "date": date, "colorIndex": colorIndex});
   }
