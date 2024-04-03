@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noteapp/controller/note_controller_.dart';
 
 import 'package:noteapp/core/constants/colorconstants.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ListViewScreen extends StatelessWidget {
   const ListViewScreen(
@@ -70,7 +71,10 @@ class ListViewScreen extends StatelessWidget {
               SizedBox(
                 width: 15,
               ),
-              Icon(Icons.share)
+             
+              InkWell(onTap: () {
+                Share.share(desc,subject: title);
+              },child: Icon(Icons.share))
             ],
           )
         ],

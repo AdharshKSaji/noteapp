@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noteapp/VIEW/homescreen.dart';
+import 'package:noteapp/VIEW/pageone.dart';
 import 'package:noteapp/core/constants/colorconstants.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen()
+            builder: (context) => PageOne()
           ));
     });
     super.initState();
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: ColorConstants.primaryBlack,
       body: Center(
-        child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFjmSnoeFgY-Gqyfjmw0r2yKzj2wgyqcLEkSo2jS6f9waDFLJxqT1Sw0RgJUjthETJbnc&usqp=CAU"),
+        child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEmWt97U3tmxtsSHNRty0XbhnxvnytzUBD7YGEIaZFAQbxNDigyz0YK_lubpeYs45jFq0&usqp=CAU"),
       ),
     );
   }

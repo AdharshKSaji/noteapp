@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:noteapp/VIEW/notescreen.dart';
@@ -20,6 +19,12 @@ int selectedColorIndex = 0;
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    NoteScreenController.getInitStateKey();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.primaryBlack,
@@ -36,34 +41,35 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemBuilder: (context, index) => ListViewScreen(
-                      title: NoteScreenController.notesList[index]["title"],
-                      desc: NoteScreenController.notesList[index]["dis"],
-                      date: NoteScreenController.notesList[index]["date"],
-                      colorindex: NoteScreenController.notesList[index]
-                          ["colorIndex"],
-                      onDeletePres: () {
-                        NoteScreenController.delete(index);
-                        setState(() {});
-                      },
-                      oneditPres: () {
-                        titleEditingController.text =
-                            NoteScreenController.notesList[index]["title"];
-                        desEditingController.text =
-                            NoteScreenController.notesList[index]["dis"];
-                        dateEditingController.text =
-                            NoteScreenController.notesList[index]["date"];
-                        selectedColorIndex =
-                            NoteScreenController.notesList[index]["colorIndex"];
+                itemBuilder: (context, index) {
+                  final currentKey = NoteScreenController.notesListKey[index];
+                  final currentElement =
+                      NoteScreenController.myBox.get(currentKey);
+                  return ListViewScreen(
+                    title: currentElement["title"],
+                    desc: currentElement["dis"],
+                    date: currentElement["date"],
+                    colorindex: currentElement["colorIndex"],
+                    onDeletePres: () {
+                      NoteScreenController.delete(currentKey);
+                      setState(() {});
+                    },
+                    oneditPres: () {
+                      titleEditingController.text = currentElement["title"];
+                      desEditingController.text = currentElement["dis"];
+                      dateEditingController.text = currentElement["date"];
+                      selectedColorIndex = currentElement["colorIndex"];
 
-                        customBottomSheet(isEdit: true, index: index);
-                      },
-                    ),
+                      customBottomSheet(isEdit: true, key: currentKey);
+                    },
+                  );
+                },
                 separatorBuilder: (context, index) => SizedBox(
                       height: 10,
                     ),
-                itemCount: NoteScreenController.notesList.length)
+                itemCount: NoteScreenController.notesListKey.length)
             // Container(
             //   child: Column(
             //     children: [],
@@ -85,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<dynamic> customBottomSheet({int index = 0, isEdit = false}) {
+  Future<dynamic> customBottomSheet({var key = 0, isEdit = false}) {
     return showModalBottomSheet(
       backgroundColor: ColorConstants.primaryGrey.withOpacity(.8),
       isScrollControlled: true,
@@ -132,22 +138,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     filled: true,
                     hintText: "Date",
                     fillColor: ColorConstants.primaryGrey,
-                    suffixIcon:InkWell(onTap: ()async {
-                    final selectedDateTime=await  showDatePicker(context: context,
-                       firstDate: DateTime.now(),
-                       lastDate: DateTime(2030));
-                       if(selectedDateTime !=null){
-                        String formatedDate =DateFormat("dd MMM yy").format(selectedDateTime);
-                       
-                       dateEditingController.text=formatedDate.toString();
-                       }
-                       dsetState(() {
-                         
-                       },);
-                    },
-                    child: Icon(Icons.calendar_month) ),
-                    
-               ) ),
+                    suffixIcon: InkWell(
+                        onTap: () async {
+                          final selectedDate = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2030));
+                          if (selectedDate != null) {
+                            String formateDate =
+                                DateFormat("dd/MM/yyyy").format(selectedDate);
+                            dateEditingController.text = formateDate.toString();
+                          }
+
+                          setState(() {});
+                        },
+                        child: Icon(Icons.calendar_month))),
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -166,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                             border: selectedColorIndex == index
                                 ? Border.all(
-                                    width: 5, color: ColorConstants.primaryBlack)
+                                    width: 2, color: ColorConstants.primaryRed)
                                 : null,
                             color: NoteScreenController.colorConstant[index],
                             borderRadius: BorderRadius.circular(10)),
@@ -181,14 +187,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {});
                       // textEditingController.text.toString();
                       // print(textEditingController.text.toString());
 
                       if (isEdit == true) {
-                        NoteScreenController.edit(
-                            index: index,
+                        await NoteScreenController.edit(
+                            key: key,
                             title: titleEditingController.text,
                             date: dateEditingController.text,
                             des: desEditingController.text,
